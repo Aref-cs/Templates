@@ -1,0 +1,143 @@
+The information provided during the chapter 4 of my thesis, along with the information in this file shows how different modules of the model can be implemented. Therefore, this information can be used to create a web portal or an application for resolving neuroscience questions.
+Since the scope of my thesis was ontologies and their effect and power in resolving questions, only codes related to the ontology part of questions is mentioned in this file. However, the general python codes are given inside the chapter, also in a separate file in this repository.
+
+
+In order to start this part, it is better to introduce the ‘prefix’ command or clause in SPARQL first. SPARQL is a RDF query language designed for use in semantic environments.  Prefix stores the uniform resource identifiers (URIs) to different ontologies and graphs. It acts as a variable containing the address or a pointer in programming languages such as C++. 
+These are the prefixes that are used in queries. They have to be used according to the needs of each code and do not have to be present in every code of this file (appendix). However, they are mentioned separately below to save space and prevent the document from becoming very long:
+
+# General prefixes
+
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema# >
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# Domain-related ontologies
+PREFIX NIF: <http://bioportal.bioontology.org/ontologies/NIF>
+PREFIX fma: <http://sig.uw.edu/fma#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboRo: <http://obofoundry.org/ro/ro.owl#>
+
+#Some Questions:
+- What are the synonyms of hippocampus?
+This question contains ‘hippocampus’ as entity and ‘synonym’ as attribute.
+Based on the groups, this is a group B question.
+Therefore, it is matched to its appropriate group and only for synonyms the code will be:
+SELECT distinct ?synonyms  
+WHERE{
+{?s rdfs:label "Hippocampus";  
+    nif:synonym ?synonyms . }   
+UNION
+{?s rdfs:label "Hippocampus";  
+    fma:synonym ?synonyms . }   
+}
+ORDER BY ?synonyms    
+Or if as mentioned in the chapter, the user wanted related answers too:
+SELECT distinct ?synonyms {
+ {VALUES ?type {oboInOwl:hasBroadSynonym oboInOwl:hasNarrowSynonym oboInOwl:hasExactSynonym 	oboInOwl:hasRelatedSynonym nif:synonym}.}
+ ?organ ?type ?synonyms} UNION
+{VALUES ?type {fma: synonym fma:_slot_synonym}
+?organ ?type ?synonyms}
+    }
+    ORDER BY ?organ
+Hippocampus can be changed with ?organ and then it can be filled by passing a value the user is seeking the synonym for, from python to this query.
+
+- What are precentral gyrus subparts?
+#selecting all sub-classes that include "precentral gyrus"
+select distinct ?parts ?name ?id ?propName ?comment
+where 
+{
+  {#getting sub-classes
+  ?c a ?class.
+  ?parts rdfs:subClassOf ?class.
+  #getting info
+  optional {?parts rdfs:label ?name.}
+        optional {?parts fma:FMAID ?id.}.
+  optional {?parts rdfs:comment ?comment.}.
+  #filtering related info 			  
+  filter contains(lcase(str(?name)), "precentral gyrus").
+  } 
+union 
+	{ optional {?property a rdf:Property. 
+    			?part ?p ?property. 
+      		optional{	?property rdfs:label ?propName}
+  	}
+}
+order by ?id
+
+- What is the average anatomical region of the lingual gyrus in the brain?
+select distinct ?label ?location ?locProp ?locObj ?fmaId ?parents ?childs ?reg_parts ?includes_regions ?niflabel ?nifparents ?nifchilds
+where
+{
+{graph <http://localhost:3030/myDataset/data/NeuroFMA>
+  {
+   ?s ?o ?p.
+    optional {?s rdfs:label ?label.}
+    ?s(/FMA:Lingual_gyrus) fma:location ?loc .
+    optional {?loc ?locProp ?locObj}
+    optional {?s fma:preferred_name ?name}
+    optional{?s fma:FMAID ?fmaId}
+    optional {?s rdfs:subClassOf ?parents}
+    optional {?childs rdfs:subClassOf ?s} 
+    optional {?s fma:regional_part_of ?reg_parts} 
+    optional {?s fma:regional_part ?includes_regions}
+   }
+  } union {
+graph <http://localhost:3030/myDataset/data/nifNolan>
+  {
+   ?s ?o ?p.
+    optional {?s rdfs:label ?niflabel.}
+    optional {?s rdfs:subClassOf ?nifparents}
+    optional {?nifchilds rdfs:subClassOf ?s} 
+   }
+}   
+   filter contains(lcase(str(?s)), "Lingual_gyrus").
+}
+Please note that the graph keyword is used in SPARQL to load specific graphs and ontologies into the memory. In this instance a local ontology has been used which is the neuroscience module of the FMA ontology.
+
+- What is amygdala?
+select distinct ?fma_uri ?def
+  WHERE
+{ ?fma_uri fma:preferred_name "Amygdala"^^xsd:string  ;
+  	  skos:definition ?def.     }
+
+- What is the anatomical  relationship of telencephalon and diencephalon?
+This is one of the hard questions. ‘Anatomical relationship’ is a domain-specific keyword (phrase), ‘telencephalon’ and ‘diencephalon’ are respectively two entities. This question contains a comparison between two entities. The comparison is not between two literals, but it is between two concepts. 
+SELECT *
+WHERE{
+  GRAPH <http://localhost:3030/myDataset/data/NeuroFMA> {
+  	fma:Telencephalon ?p ?o
+  }
+  EXISTS{ 
+  GRAPH <http://localhost:3030/myDataset/data/NeuroFMA> {
+    fma:Diencephalon ?p ?o}
+	}
+}
+
+For the general form of the code, the two terms can be changed with two variables. 
+
+- Get all information available regarding amygdala?
+#getting all info regarding a part 
+select distinct ?reg ?oboId ?fmaId ?parent ?reg_part ?synonym
+where{
+graph <http://localhost:3030/myDataset/data/NeuroFMA>
+  {
+   ?s ?o ?p.
+   optional {?s oboInOwl:id ?oboId}
+   optional{?s fma:FMAID ?fmaId}
+   optional {?s rdfs:subClassOf ?parent}
+   optional {?s fma:regional_part ?reg_part} 
+   optional {?s fma:Synonym ?synonym}
+   filter contains(lcase(str(?label)), "amygdala").
+  }
+ }   
+
+- What is the location of the superior temporal gyrus?
+select distinct ?loc ?locPred ?locObj 
+{
+  graph <http://localhost:3030/myDataset/data/NeuroFMA>{
+  fma:Superior_temporal_gyrus fma:location ?loc 
+    optional {fma:live_incus_fm_14056 ?p ?o}
+
