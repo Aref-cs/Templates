@@ -1,0 +1,37 @@
+This is the dataset used in both Chapter 4 of my thesis, and Papers 3/4 & 4/4 of my publications, related to this research. Neuroimage resources provided by experts for this research were MRI neuroimages and their annotated data. However, the set of questions we had in the previous study (Ch3/ paper 2/4) included some questions that needed functional magnetic resonance imaging (fMRI) to be answered. 
+
+Functional magnetic resonance imaging is blood oxygen level dependant (BOLD). This means special experiments have to be performed so their outcome can be used to resolve questions. Therefore, some questions have been changed slightly by an expert in order to be resolvable using the MRI images. Also, some questions have been added and replaced in the new set. The set of questions is as follows:
+
+1.	What are the synonyms of hippocampus?
+2.	Which parts of precentral gyrus have volume in the data?
+3.	What  is the thickness of the gyrus rectus in the data?
+4.	Do  the schizophrenia subjects show more or less ventricular enlargement  than healthy subjects do, in cortical regions that are connected by the superior longitudinal fasciculus?
+5.	What is the white matter volume of  the inferior parietal lobule in the data?
+6.	What is the anatomical region  of the lingual gyrus ?
+7.	What is the amygdala?
+8.	What is the anatomical relationship   of telencephalon and diencephalon?
+9.	What are amygdala parts ?
+10.	Which regions overlap with the precentral gyrus?
+11.	How many subjects gained extra volume in a region of the diencephalon in the patient’s data?
+12.	Which annotated structural region has changed volume in patients?
+13.	What  are the branches of the seventh thoracic nerve?
+14.	What is the anatomical region  of the premotor cortex?
+15.	What is the thickness of the inferior parietal lobule in the data?
+16.	What  is the grey matter volume of the short insular gyrus in the data?
+17.	Which part of the cerebral cortex has the highest atrophy in HD?
+18.	Which parts of the cortical region has highest amount of cortical thinning?
+19.	What are the adjacent regions to the most atrophied region in HD?
+20.	Which regions are connected  to the most atrophied region in HD?
+21.	Which cortical regions show curvature  in HD?
+22.	Wh at are the parts of the superior temporal gyrus?
+23.	Which cortical regions show thinning in pre manifest HD?
+24.	Which regions show thinning/atrophy over 12 months in HD?
+25.	Does any region show increased volume in pre manifest HD?
+26.	How many regions are in the parietal cortex?
+27.	Is the thalamus atrophic in these Multiple Sclerosis patients?
+28.	What are the regional parts of the posterior short insular gyrus?
+29.	What are the subjects  with an average cortical thickness less than 5mm?
+30.	What is the thickness  of the anterior cingulate gyrus?
+31.	Is the degree of change in volume of the thalamus over 1 year in patients greater than the change in controls?
+32.	Are cortical thicknesses correlated across all cortical regions in this subject group?
+The tasks described and related to this study were produced based on the above questions. Of course, as will be demonstrated in the following sections, the model represented in this study theoretically has the potential to answer fMRI questions upon access to those images and incorporate information related to them.
